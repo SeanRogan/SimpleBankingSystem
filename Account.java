@@ -37,18 +37,12 @@ public class Account {
     public void withdrawFunds(float withdrawal) {
         this.balance-=withdrawal;
     }
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
 
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
     private String accountNumber;
     private String cardNumber;
     private String pin;
     private float balance;
-    private boolean loggedIn;
+
 
 
 

@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 public class Bank {
 
+    private String bankIdNumber;
+    private HashMap<String, Account> bankAccounts;
     public Bank(String bankIdNumber) {
-    this.bankIdNumber = bankIdNumber;
+        this.bankIdNumber = bankIdNumber;
     }
 
     public HashMap<String, Account> getBankAccounts() {
@@ -17,10 +19,8 @@ public class Bank {
     }
 
     public void createAccount(String accountNumber , Account bankAccount) {
-        bankAccounts.put(accountNumber,bankAccount);
+        bankAccounts.put(accountNumber, bankAccount);
     }
-    private String bankIdNumber;
-
     public String getBankIdNumber() {
         return bankIdNumber;
     }
@@ -28,9 +28,5 @@ public class Bank {
     public void setBankIdNumber(String bankIdNumber) {
         this.bankIdNumber = bankIdNumber;
     }
-
-    private HashMap<String, Account> bankAccounts;
-
-
 
 }
