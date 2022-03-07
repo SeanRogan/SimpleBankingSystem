@@ -23,7 +23,7 @@ public class Main {
 
                 switch (input) {
                     case 0: {
-                        break program;
+                        running = false;
                     }
                     case 1: {
                         createAccount(bankAccounts);
