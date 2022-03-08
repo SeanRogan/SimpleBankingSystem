@@ -61,7 +61,7 @@ public class Main {
             System.out.println("Enter your PIN:");
             String inputPinNumber = scan.next();
             //if wrong credentials, exit to menu
-            if(!checkLoginCredentials(bank.getBankAccounts(), inputCardNumber, inputPinNumber)) {
+            if(!checkLoginCredentials(bank, inputCardNumber, inputPinNumber)) {
                 return;
             }
             loggedIn = true;
@@ -108,10 +108,10 @@ public class Main {
         return (checkSum + Integer.parseInt(checkDigit)) % 10 == 0;
     }
 
-    private static boolean checkLoginCredentials(HashMap<String , Account> bankAccounts, String inputCardNumber, String inputPinNumber) {
+    private static boolean checkLoginCredentials(Bank bank, String inputCardNumber, String inputPinNumber) {
         try {
-            if (bankAccounts.get(inputCardNumber.substring(6, 15)).getPin().equals(inputPinNumber) &&
-                    (bankAccounts.get(inputCardNumber.substring(6, 15)).getCardNumber().equals(inputCardNumber))) {
+            if (bank.getBankAccounts().get(inputCardNumber.substring(6, 15)).getPin().equals(inputPinNumber) &&
+                    (bank.getBankAccounts().get(inputCardNumber.substring(6, 15)).getCardNumber().equals(inputCardNumber))) {
                 return true;
             }
         } catch (NullPointerException e) {

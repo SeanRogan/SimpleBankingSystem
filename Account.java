@@ -13,7 +13,7 @@ public class Account {
         this.cardNumber = generateCardNumber(bank.getBankIdNumber(), accountNumber);
         this.bankIdNumber = bank.getBankIdNumber();
         this.customerID = String.valueOf(bank.getBankAccounts().size() + 1);
-        System.out.println("Your card has been created\nYour card number:\n" + this.cardNumber + "\n" + "Your card PIN:\n" + this.pin + "\n");
+        System.out.println("\nYour card has been created\nYour card number:\n" + this.cardNumber + "\n" + "Your card PIN:\n" + this.pin + "\n");
     }
     //randomly generated account number
     private String generateAccountNumber() {
@@ -32,6 +32,8 @@ public class Account {
     //luhn algorithm applied to cardNumberSeed
     // to find the check digit on the end of the card number
     private String findCheckDigit(String bankIdNumber, String accountNumber) {
+        //todo use algo checker to do all this work
+        LuhnAlgorithmChecker algo = new LuhnAlgorithmChecker();
         String cardNumberSeed = bankIdNumber + accountNumber;
         int checkSum = Arrays.stream(cardNumberSeed.split("")).
                 map(Integer::parseInt).
@@ -79,6 +81,11 @@ public class Account {
     private String customerID;
     private String bankIdNumber;
     private String accountNumber;
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
     private String cardNumber;
     private String pin;
     private float balance;

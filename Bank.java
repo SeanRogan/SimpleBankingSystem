@@ -20,8 +20,9 @@ public class Bank {
     }
     public void createAccount(Bank bank) {
         //todo this has to create the account number,
-        String customerID = String.valueOf(bank.getBankAccounts().size() + 1);
-        bank.getBankAccounts().put(customerID,new Account(bank));
+        Account newAccount = new Account(bank);
+        //String customerID = String.valueOf(bank.getBankAccounts().size() + 1);
+        bank.getBankAccounts().put(newAccount.getAccountNumber(),newAccount);
     }
 
 }
