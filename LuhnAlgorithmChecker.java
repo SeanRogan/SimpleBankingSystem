@@ -14,7 +14,7 @@ public class LuhnAlgorithmChecker {
             cardNumberArray[i] = Integer.parseInt("" + digit);
         }
         //iterate backwards through array
-        for(int i = cardNumberArray.length-2; i>=0; i=i-2) {
+        for(int i = cardNumberArray.length-1; i>=0; i=i-2) {
             int digit = cardNumberArray[i];
             //multiply every odd number by 2
             digit = digit * 2;
@@ -41,7 +41,7 @@ public class LuhnAlgorithmChecker {
             cardNumberArray[i] = Integer.parseInt("" + digit);
         }
         //iterate backwards through array
-        for(int i = cardNumberArray.length-2; i>=0; i=i-2) {
+        for(int i = cardNumberArray.length-1; i>=0; i=i-2) {
             int digit = cardNumberArray[i];
             //multiply every odd number by 2
             digit = digit * 2;
