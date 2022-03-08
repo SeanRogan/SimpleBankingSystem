@@ -122,7 +122,7 @@ public class Main {
     }
 
     private static void createAccount(Bank bank) {
-        bank.createAccount();
+        bank.createAccount(bank);
     }
 
     public static void printMenu() {

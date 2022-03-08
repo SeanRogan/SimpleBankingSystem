@@ -5,14 +5,24 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Account {
 
-    Account() {
+    Account(Bank bank) {
         //randomly generated 4 digit pin from 1000-9999
         this.pin = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9999));
+        //randomly generated account number
         this.accountNumber = generateAccountNumber();
-        this.cardNumber = generateCardNumber(bankIdNumber, accountNumber);
+        this.cardNumber = generateCardNumber(bank.getBankIdNumber(), accountNumber);
+        this.bankIdNumber = bank.getBankIdNumber();
+        this.customerID = String.valueOf(bank.getBankAccounts().size() + 1);
+        System.out.println("Your card has been created\nYour card number:\n" + this.cardNumber + "\n" + "Your card PIN:\n" + this.pin + "\n");
     }
     //randomly generated account number
     private String generateAccountNumber() {
+        //todo loop through existing bank accounts and
+        // check that the generated account number
+        // doesnt match any previously existing ones
+        // beforing issueing the number to the client.
+        // use a while loop to keep it generating
+        // new numbers until it finds one that isnt being used.
         return String.valueOf(ThreadLocalRandom.current().nextInt(100000000, 999999999));
     }
     private String generateCardNumber(String bankIdNumber, String accountNumber) {
@@ -23,13 +33,14 @@ public class Account {
     // to find the check digit on the end of the card number
     private String findCheckDigit(String bankIdNumber, String accountNumber) {
         String cardNumberSeed = bankIdNumber + accountNumber;
-
-        return String.valueOf(10 - (Arrays.stream(cardNumberSeed.split("")).
+        int checkSum = Arrays.stream(cardNumberSeed.split("")).
                 map(Integer::parseInt).
                 map(i -> i % 2 == 0 ? i * 2 : i).
                 map(j -> j > 9 ? j - 9 : j).
                 mapToInt(Integer::intValue).
-                sum()));
+                sum();
+        int checkDigit = 10 - (checkSum%10);
+        return String.valueOf(checkDigit);
     }
 
     public String getCardNumber() {
@@ -61,14 +72,8 @@ public class Account {
     public String getBankIdNumber() {
         return bankIdNumber;
     }
-    public void setBankIdNumber(String bankIdNumber) {
-        this.bankIdNumber = bankIdNumber;
-    }
     public String getCustomerID() {
         return customerID;
-    }
-    public void setCustomerID(String customerID) {
-        this.customerID = customerID;
     }
 
     private String customerID;

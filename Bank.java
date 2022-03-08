@@ -8,6 +8,7 @@ public class Bank {
     private HashMap<String, Account> bankAccounts;
     public Bank(String bankIdNumber) {
         this.bankIdNumber = bankIdNumber;
+        this.bankAccounts = new HashMap<>();
     }
 
     public HashMap<String, Account> getBankAccounts() {
@@ -17,10 +18,10 @@ public class Bank {
     public String getBankIdNumber() {
         return bankIdNumber;
     }
-    public void createAccount() {
+    public void createAccount(Bank bank) {
         //todo this has to create the account number,
-        String customerID = String.valueOf(bankAccounts.size() + 1);
-        bankAccounts.put(customerID,new Account());
+        String customerID = String.valueOf(bank.getBankAccounts().size() + 1);
+        bank.getBankAccounts().put(customerID,new Account(bank));
     }
 
 }
