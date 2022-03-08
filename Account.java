@@ -4,6 +4,13 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Account {
+    final LuhnAlgorithmChecker algo = new LuhnAlgorithmChecker();
+    private String customerID;
+    private String bankIdNumber;
+    private String accountNumber;
+    private String cardNumber;
+    private String pin;
+    private float balance;
 
     Account(Bank bank) {
         //randomly generated 4 digit pin from 1000-9999
@@ -26,39 +33,23 @@ public class Account {
         return String.valueOf(ThreadLocalRandom.current().nextInt(100000000, 999999999));
     }
     private String generateCardNumber(String bankIdNumber, String accountNumber) {
-        return bankIdNumber + accountNumber + findCheckDigit(bankIdNumber,accountNumber);
-
+        String cardSeed = bankIdNumber + accountNumber;
+        return bankIdNumber + accountNumber + algo.returnCheckDigit(cardSeed);
     }
-    //luhn algorithm applied to cardNumberSeed
-    // to find the check digit on the end of the card number
-    private String findCheckDigit(String bankIdNumber, String accountNumber) {
-        //todo use algo checker to do all this work
-        LuhnAlgorithmChecker algo = new LuhnAlgorithmChecker();
-        String cardNumberSeed = bankIdNumber + accountNumber;
-        int checkSum = Arrays.stream(cardNumberSeed.split("")).
-                map(Integer::parseInt).
-                map(i -> i % 2 == 0 ? i * 2 : i).
-                map(j -> j > 9 ? j - 9 : j).
-                mapToInt(Integer::intValue).
-                sum();
-        int checkDigit = 10 - (checkSum%10);
-        return String.valueOf(checkDigit);
-    }
-
     public String getCardNumber() {
         return cardNumber;
     }
+
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
-
     public String getPin() {
         return pin;
     }
+
     public void setPin(String pin) {
         this.pin = pin;
     }
-
     public float getBalance() {
         return balance;
     }
@@ -74,23 +65,12 @@ public class Account {
     public String getBankIdNumber() {
         return bankIdNumber;
     }
+
     public String getCustomerID() {
         return customerID;
     }
 
-    private String customerID;
-    private String bankIdNumber;
-    private String accountNumber;
-
     public String getAccountNumber() {
         return accountNumber;
     }
-
-    private String cardNumber;
-    private String pin;
-    private float balance;
-
-
-
-
 }
