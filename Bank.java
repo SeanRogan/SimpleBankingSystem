@@ -14,19 +14,13 @@ public class Bank {
         return bankAccounts;
     }
 
-    public void setBankAccounts(HashMap<String, Account> bankAccounts) {
-        this.bankAccounts = bankAccounts;
-    }
-
-    public void createAccount(String accountNumber , Account bankAccount) {
-        bankAccounts.put(accountNumber, bankAccount);
-    }
     public String getBankIdNumber() {
         return bankIdNumber;
     }
-
-    public void setBankIdNumber(String bankIdNumber) {
-        this.bankIdNumber = bankIdNumber;
+    public void createAccount() {
+        //todo this has to create the account number,
+        String customerID = String.valueOf(bankAccounts.size() + 1);
+        bankAccounts.put(customerID,new Account());
     }
 
 }
