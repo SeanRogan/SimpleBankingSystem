@@ -32,7 +32,6 @@ public class Account {
         // new numbers until it finds one that isnt being used.
         return String.valueOf(ThreadLocalRandom.current().nextInt(100000000, 999999999));
     }
-    //TODO this still wont work for some reason. need to debug the luhn algo
     private String generateCardNumber(String bankIdNumber, String accountNumber) {
         String cardSeed = bankIdNumber + accountNumber;
         return bankIdNumber + accountNumber + algo.returnCheckDigit(cardSeed);
