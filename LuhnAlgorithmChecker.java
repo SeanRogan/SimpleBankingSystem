@@ -54,6 +54,10 @@ public class LuhnAlgorithmChecker {
             cardNumberArray[i] = digit;
         }
         int checkSum = Arrays.stream(cardNumberArray).sum();
-        return 10 - (checkSum % 10);
+        int checkDigit = 10 - (checkSum % 10);
+        if(checkDigit<10) {
+            return  checkDigit;
+        }
+        return 0;
     }
 }

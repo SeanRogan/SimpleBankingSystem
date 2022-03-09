@@ -55,9 +55,7 @@ public class Main {
         try {
             String inputCardNumber = scan.next();
             String accountNumber = inputCardNumber.substring(6, 15);
-            if (!validateCardNumber(inputCardNumber)) {
-                throw new Exception();
-            }
+
             System.out.println("Enter your PIN:");
             String inputPinNumber = scan.next();
             //if wrong credentials, exit to menu
@@ -95,18 +93,6 @@ public class Main {
         }
     }
 
-    private static boolean validateCardNumber(String inputCardNumber) {
-        String cardNumberSeed = inputCardNumber.substring(0,15);
-        String checkDigit = inputCardNumber.substring(15,16);
-
-        int checkSum = Arrays.stream(cardNumberSeed.split("")).
-                map(Integer::parseInt).
-                map(i -> i % 2 == 0 ? i * 2 : i).
-                map(j -> j > 9 ? j - 9 : j).
-                mapToInt(Integer::intValue).
-                sum();
-        return (checkSum + Integer.parseInt(checkDigit)) % 10 == 0;
-    }
 
     private static boolean checkLoginCredentials(Bank bank, String inputCardNumber, String inputPinNumber) {
         try {
