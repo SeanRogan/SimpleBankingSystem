@@ -9,10 +9,11 @@ import java.util.Scanner;
 
 public class Main {
     //initialize bank class with id number.
-    final static public Bank bank = new Bank("400000");
+    final public static Bank bank = new Bank("400000");
     final public static Scanner scan = new Scanner(System.in);
-
     public static void main(String[] args) {
+
+        Connect.connect(args);
 
         boolean running = true;
         while(running) {
