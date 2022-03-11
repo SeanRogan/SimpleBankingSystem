@@ -4,14 +4,23 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 //Connect to SQLite DB
-public class Connect {
+public class Database {
+    public static void createNewDatabase(String fileName) {
+    String url = "jdbc:sqlite:Users/seanrogan/IdeaProjects/";
 
+    }
+
+    public void createTable() {}
+    public void update() {}
+    public void delete() {}
+    public void insert() {}
+    public void select() {}
     public static void connect(String [] args) {
         Connection connection = null;
         try {
             String url = "jdbc:sqlite:sampleDB.db";
             connection = DriverManager.getConnection(url);
-            System.out.println("Connection to DB has been established");
+            System.out.println("Connection to database has been established");
         }
         catch (SQLException e) {
             System.out.println(e.getMessage());

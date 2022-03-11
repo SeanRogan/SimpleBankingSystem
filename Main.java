@@ -1,8 +1,6 @@
 package banking;
 
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.InputMismatchException;
 
 import java.util.Scanner;
@@ -13,7 +11,7 @@ public class Main {
     final public static Scanner scan = new Scanner(System.in);
     public static void main(String[] args) {
 
-        Connect.connect(args);
+        Database.connect(args);
 
         boolean running = true;
         while(running) {
