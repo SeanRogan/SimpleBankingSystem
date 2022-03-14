@@ -1,41 +1,42 @@
 package banking;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 //Connect to SQLite DB
 public class Database {
-    public static void createNewDatabase(String fileName) {
-    String url = "jdbc:sqlite:Users/seanrogan/IdeaProjects/";
+    private String fileName;
+    public String getFileName() {
+        return fileName;
+    }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    Database(String[] args) {
+        this.fileName = args[1];
+        createNewDatabase(fileName);
 
     }
 
-    public void createTable() {}
+
+    private static void createNewDatabase(String fileName) {
+        String url = "jdbc:sqlite:/Users/seanrogan/IdeaProjects/Simple Banking System1/Simple Banking System/task/" + fileName;
+        try{
+            Connection connect = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
+    }
+    public void createTable() {
+
+    }
     public void update() {}
     public void delete() {}
     public void insert() {}
     public void select() {}
-    public static void connect(String [] args) {
-        Connection connection = null;
-        try {
-            String url = "jdbc:sqlite:sampleDB.db";
-            connection = DriverManager.getConnection(url);
-            System.out.println("Connection to database has been established");
-        }
-        catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            //close connection
-            try {
-                if(connection != null) connection.close();
-
-            }catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-
 
 }
 

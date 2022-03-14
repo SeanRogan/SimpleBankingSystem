@@ -1,6 +1,7 @@
 package banking;
 
 
+import javax.xml.crypto.Data;
 import java.util.InputMismatchException;
 
 import java.util.Scanner;
@@ -10,8 +11,12 @@ public class Main {
     final public static Bank bank = new Bank("400000");
     final public static Scanner scan = new Scanner(System.in);
     public static void main(String[] args) {
+String[] array = {"firstDB","sampleDB"};
+        Database db = new Database(array);
 
-        Database.connect(args);
+
+
+
 
         boolean running = true;
         while(running) {
