@@ -65,7 +65,6 @@ public class Database {
 
         String url = "jdbc:sqlite:/Users/seanrogan/IdeaProjects/Simple Banking System1/Simple Banking System/task/" + fileName;
         try {
-
             connect = DriverManager.getConnection(url);
             Statement s = connect.createStatement();
             s.execute(sqlCreateTableStatement);
@@ -78,8 +77,19 @@ public class Database {
             }
         }
     }
-    public void update() {
-        String sql = "";
+
+    public void updateBalance (String balance) {
+        String sql = "UPDATE card SET balance = ?";
+        try{
+            Connection conn = this.connect();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, balance);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void update(String sql) {
         try{
             Connection conn = this.connect();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -87,9 +97,17 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
     }
-    public void delete() {}
+    public void delete(String cardNumber) {
+        String sql = "DELETE FROM card WHERE number = ?";
+        try{
+            Connection conn = this.connect();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, cardNumber);
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void insert(String sql) {
         try{
@@ -99,7 +117,6 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     public void insertNewAccount(String customerID, String cardNumber, String pin) {
@@ -116,7 +133,25 @@ public class Database {
         }
 
     }
-    public void select() {}
+    public float queryBalance(String balance, String cardNumber) {
+        String sql = "SELECT ? FROM card WHERE number = '?'";
+        float currentBalance = 0.0F;
+        try{
+            Connection conn = this.connect();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, balance);
+            ps.setString(2, cardNumber);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                currentBalance = Float.parseFloat(rs.getString("balance"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return currentBalance;
+    }
 
 }
 

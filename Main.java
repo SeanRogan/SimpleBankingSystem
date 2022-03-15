@@ -80,23 +80,27 @@ public class Main {
                         return true;
                     }
                     case 1: {
+                        //GET BALANCE
                         //formats balance as float to two decimals
-                        System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
-                        System.out.println();
+                        //System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
+                        System.out.printf("%.2f", db.queryBalance("balance", inputCardNumber));
                         return false;
                     }
                     case 2: {
+                        //DEPOSIT
                         System.out.println("Enter income:");
+
                         float balance = 0;
+                        balance = db.queryBalance("balance", inputCardNumber);
                         float deposit = scan.nextFloat();
+                        float newBalance = balance + deposit;
                         bank.getBankAccounts().get(accountNumber).depositFunds(deposit);
-                        //todo make query to get current balance and then update ++deposit to database
-                        db.update();
+                        db.updateBalance(Float.toString(newBalance));
                         System.out.println("Income was added!");
                         return false;
                     }
                     case 3: {
-
+                        //TRANSFER
                         //todo this probably should be a transfer method
                         System.out.println("Transfer");
                         System.out.println("Enter card number:");
@@ -112,18 +116,21 @@ public class Main {
                         return false;
                     }
                     case 4: {
-                        //todo delete account
+                        //CLOSE ACCOUNT
+                        bank.getBankAccounts().remove(inputCardNumber);
+                        db.delete(inputCardNumber);
                         System.out.println("The account has been closed!");
                         return false;
                     }
 
                     case 5: {
+                        //LOG OUT
                         System.out.println("You have successfully logged out!");
                         loggedIn = false;
                     }
                     break;
                     default:
-                        System.out.println("Please choose either 0, 1, or 2!");
+                        System.out.println("Please choose a number, from 0 to 5!");
                         return false;
                 }
             }
@@ -136,6 +143,8 @@ public class Main {
 
 
     private static boolean checkLoginCredentials(Bank bank, String inputCardNumber, String inputPinNumber) {
+
+        //todo rewrite this to query the data base for matches
         try {
             if (bank.getBankAccounts().get(inputCardNumber.substring(6, 15)).getPin().equals(inputPinNumber) &&
                     (bank.getBankAccounts().get(inputCardNumber.substring(6, 15)).getCardNumber().equals(inputCardNumber))) {
