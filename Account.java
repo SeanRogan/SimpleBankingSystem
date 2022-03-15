@@ -12,14 +12,18 @@ public class Account {
     private String pin;
     private float balance;
 
-    Account(Bank bank) {
+    Account(Bank bank , Database db) {
         //randomly generated 4 digit pin from 1000-9999
         this.pin = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9999));
         //randomly generated account number
         this.accountNumber = generateAccountNumber();
+        //set card number
         this.cardNumber = generateCardNumber(bank.getBankIdNumber(), accountNumber);
+        //set bank id account belongs to
         this.bankIdNumber = bank.getBankIdNumber();
+        //set sequential customer id number
         this.customerID = String.valueOf(bank.getBankAccounts().size() + 1);
+        db.insertNewAccount(customerID, cardNumber, pin);
         System.out.println("\nYour card has been created\nYour card number:\n" + this.cardNumber + "\n" + "Your card PIN:\n" + this.pin + "\n");
     }
     //randomly generated account number

@@ -2,6 +2,7 @@ package banking;
 
 
 import javax.xml.crypto.Data;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 
 import java.util.Scanner;
@@ -10,13 +11,10 @@ public class Main {
     //initialize bank class with id number.
     final public static Bank bank = new Bank("400000");
     final public static Scanner scan = new Scanner(System.in);
-    public static void main(String[] args) {
-String[] array = {"firstDB","sampleDB"};
-        Database db = new Database(array);
+    public static void main(String[] args) throws SQLException {
 
-
-
-
+        Database db = new Database(args);
+        db.createCardTable();
 
         boolean running = true;
         while(running) {
@@ -29,12 +27,15 @@ String[] array = {"firstDB","sampleDB"};
                     case 0: {
                         running = false;
                     }
+                    break;
                     case 1: {
-                        createAccount(bank);
+                        createAccount(bank, db);
                     }
                     break;
                     case 2: {
-                        accessAccount(bank);
+                        if(accessAccount(bank)) {
+                            running = false;
+                        }
                     }
                     break;
 
@@ -52,7 +53,7 @@ String[] array = {"firstDB","sampleDB"};
 
     }
 
-    private static void accessAccount(Bank bank) {
+    private static boolean accessAccount(Bank bank) {
         boolean loggedIn;
         boolean validInput = true;
         System.out.println("Enter your card number:");
@@ -64,7 +65,7 @@ String[] array = {"firstDB","sampleDB"};
             String inputPinNumber = scan.next();
             //if wrong credentials, exit to menu
             if(!checkLoginCredentials(bank, inputCardNumber, inputPinNumber)) {
-                return;
+                return false;
             }
             loggedIn = true;
             System.out.println("You have successfully logged in!\n");
@@ -74,15 +75,14 @@ String[] array = {"firstDB","sampleDB"};
                 int input = scan.nextInt();
                 switch (input) {
                     case 0: {
-                        return;
+                        return true;
                     }
                     case 1: {
                         //formats balance as float to two decimals
                         System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
                         System.out.println();
-
+                        return false;
                     }
-                    break;
                     case 2: {
                         System.out.println("You have successfully logged out!");
                         loggedIn = false;
@@ -90,11 +90,14 @@ String[] array = {"firstDB","sampleDB"};
                     break;
                     default:
                         System.out.println("Please choose either 0, 1, or 2!");
+                        return false;
                 }
             }
         } catch (Exception e){
             System.out.println("Sorry! That was not a valid input.");
+            return false;
         }
+        return false;
     }
 
 
@@ -111,8 +114,8 @@ String[] array = {"firstDB","sampleDB"};
         return false;
     }
 
-    private static void createAccount(Bank bank) {
-        bank.createAccount(bank);
+    private static void createAccount(Bank bank, Database db) {
+        bank.createAccount(bank , db);
     }
 
     public static void printMenu() {
