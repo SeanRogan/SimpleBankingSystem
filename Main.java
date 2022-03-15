@@ -2,6 +2,7 @@ package banking;
 
 
 import javax.xml.crypto.Data;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 
@@ -33,7 +34,7 @@ public class Main {
                     }
                     break;
                     case 2: {
-                        if(accessAccount(bank)) {
+                        if(accessAccount(bank, db)) {
                             running = false;
                         }
                     }
@@ -53,7 +54,8 @@ public class Main {
 
     }
 
-    private static boolean accessAccount(Bank bank) {
+    private static boolean accessAccount(Bank bank, Database db) {
+        //returns a boolean, true if the program is to exit, false otherwise
         boolean loggedIn;
         boolean validInput = true;
         System.out.println("Enter your card number:");
@@ -71,7 +73,7 @@ public class Main {
             System.out.println("You have successfully logged in!\n");
 
             while (loggedIn) {
-                System.out.println("1 Balance\n2. Log out\n0. Exit\n");
+                System.out.println("1 Balance\n2. Add income\n3. Do transfer\n4. Close account\n5. Log out\n0. Exit\n");
                 int input = scan.nextInt();
                 switch (input) {
                     case 0: {
@@ -84,6 +86,38 @@ public class Main {
                         return false;
                     }
                     case 2: {
+                        System.out.println("Enter income:");
+                        float balance = 0;
+                        float deposit = scan.nextFloat();
+                        bank.getBankAccounts().get(accountNumber).depositFunds(deposit);
+                        //todo make query to get current balance and then update ++deposit to database
+                        db.update();
+                        System.out.println("Income was added!");
+                        return false;
+                    }
+                    case 3: {
+
+                        //todo this probably should be a transfer method
+                        System.out.println("Transfer");
+                        System.out.println("Enter card number:");
+                        String cardNumber = scan.nextLine();
+
+                        System.out.println("Enter how much money you want to transfer:");
+                        String transfer = scan.nextLine();
+                        //query if theres enough in the account, if not
+                        System.out.println("Not enough money!");
+                        System.out.println("You can't transfer money to the same account!");
+                        System.out.println("Probably you made a mistake in the card number. Please try again!");
+                        System.out.println("Such a card does not exist.");
+                        return false;
+                    }
+                    case 4: {
+                        //todo delete account
+                        System.out.println("The account has been closed!");
+                        return false;
+                    }
+
+                    case 5: {
                         System.out.println("You have successfully logged out!");
                         loggedIn = false;
                     }

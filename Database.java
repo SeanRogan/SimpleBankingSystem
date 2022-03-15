@@ -78,7 +78,17 @@ public class Database {
             }
         }
     }
-    public void update() {}
+    public void update() {
+        String sql = "";
+        try{
+            Connection conn = this.connect();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
     public void delete() {}
 
     public void insert(String sql) {
