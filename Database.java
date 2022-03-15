@@ -77,9 +77,8 @@ public class Database {
             }
         }
     }
-
-    public void updateBalance (String balance) {
-        String sql = "UPDATE card SET balance = ?";
+    public void updateBalance (String balance, String cardNumber) {
+        String sql = "UPDATE card WHERE number = ? SET balance = ?";
         try{
             Connection conn = this.connect();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -98,7 +97,19 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-    public void delete(String cardNumber) {
+    public ResultSet select(String sql) {
+        ResultSet set = null;
+        try{
+            Connection conn = this.connect();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+       return null;
+    }
+
+    public void deleteAccount(String cardNumber) {
         String sql = "DELETE FROM card WHERE number = ?";
         try{
             Connection conn = this.connect();

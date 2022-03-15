@@ -6,6 +6,15 @@ public class LuhnAlgorithmChecker {
 
     public LuhnAlgorithmChecker() {
     }
+
+    public boolean verifyCardNumber(String cardNumber) {
+        //todo build this to take a card number
+        if (cardNumber.charAt(cardNumber.length()-1) == (char)returnCheckDigit(cardNumber)) {
+            return true;
+        }
+        return false;
+    }
+
     public int findCheckSum(String number) {
         int[] cardNumberArray = new int[number.length()];
         for(int i : cardNumberArray) {

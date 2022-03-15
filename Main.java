@@ -3,6 +3,7 @@ package banking;
 
 import javax.xml.crypto.Data;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 
@@ -12,8 +13,8 @@ public class Main {
     //initialize bank class with id number.
     final public static Bank bank = new Bank("400000");
     final public static Scanner scan = new Scanner(System.in);
-    public static void main(String[] args) throws SQLException {
 
+    public static void main(String[] args) throws SQLException {
         Database db = new Database(args);
         db.createCardTable();
 
@@ -88,37 +89,52 @@ public class Main {
                     }
                     case 2: {
                         //DEPOSIT
-                        System.out.println("Enter income:");
-
+                        float deposit = 0;
                         float balance = 0;
+                        System.out.println("Enter income:");
+                        String in = scan.nextLine();
+                        deposit = Float.parseFloat(in);
                         balance = db.queryBalance("balance", inputCardNumber);
-                        float deposit = scan.nextFloat();
                         float newBalance = balance + deposit;
                         bank.getBankAccounts().get(accountNumber).depositFunds(deposit);
-                        db.updateBalance(Float.toString(newBalance));
+                        db.updateBalance(Float.toString(newBalance) , inputCardNumber);
                         System.out.println("Income was added!");
                         return false;
                     }
                     case 3: {
                         //TRANSFER
-                        //todo this probably should be a transfer method
                         System.out.println("Transfer");
                         System.out.println("Enter card number:");
                         String cardNumber = scan.nextLine();
-
                         System.out.println("Enter how much money you want to transfer:");
                         String transfer = scan.nextLine();
-                        //query if theres enough in the account, if not
-                        System.out.println("Not enough money!");
-                        System.out.println("You can't transfer money to the same account!");
-                        System.out.println("Probably you made a mistake in the card number. Please try again!");
-                        System.out.println("Such a card does not exist.");
-                        return false;
+                        if(Float.parseFloat(transfer) > db.queryBalance("balance" , inputCardNumber)) {
+                            System.out.println("Not enough money!");
+                            return false;
+                        }
+                        if(cardNumber == inputCardNumber) {
+                            System.out.println("You can't transfer money to the same account!");
+                            return false;
+                        }
+                        if(!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
+                            System.out.println("Probably you made a mistake in the card number. Please try again!");
+                            return false;
+                        }
+                        if(!findAccount(db , cardNumber)) {
+                            System.out.println("Such a card does not exist.");
+                            return false;
+                        }
+                        //if it gets past all the exceptions, transfer the money
+                        float currentBalance = db.queryBalance("balance" , cardNumber);
+                        String newBalance = Float.toString(currentBalance + Float.parseFloat(transfer));
+                        db.updateBalance(newBalance, cardNumber);
+                        System.out.println("Success!");
                     }
+                    break;
                     case 4: {
                         //CLOSE ACCOUNT
                         bank.getBankAccounts().remove(inputCardNumber);
-                        db.delete(inputCardNumber);
+                        db.deleteAccount(inputCardNumber);
                         System.out.println("The account has been closed!");
                         return false;
                     }
@@ -137,6 +153,21 @@ public class Main {
         } catch (Exception e){
             System.out.println("Sorry! That was not a valid input.");
             return false;
+        }
+        return false;
+    }
+
+    private static boolean findAccount(Database db, String cardNumber) {
+        String sql = "SELECT * FROM card";
+        ResultSet queryResult = db.select(sql);
+        try{
+            while(queryResult.next()) {
+                if (queryResult.getString("number") == cardNumber) {
+                    return true;
+                }
+            }
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
         }
         return false;
     }
