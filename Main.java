@@ -2,9 +2,7 @@ package banking;
 
 
 import javax.xml.crypto.Data;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.InputMismatchException;
 
 import java.util.Scanner;
@@ -87,6 +85,7 @@ public class Main {
                         //formats balance as float to two decimals
                         //System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
                         System.out.printf("%.2f", db.queryBalance(inputCardNumber));
+                        System.out.println();
                         return false;
                     }
                     case 2: {
@@ -173,11 +172,20 @@ public class Main {
     }
 
 
-    private static boolean checkLoginCredentials(Bank bank, Database db, String inputCardNumber, String inputPinNumber) {
-
-
-        //todo rewrite this to query the data base for matches PRIORITY 1
-
+    private static boolean checkLoginCredentials(Bank bank, Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
+        Connection connection = null;
+        try {
+            connection = db.connect();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM card WHERE number = " + inputCardNumber
+                    + " AND pin = " + inputPinNumber);
+            return ps.executeQuery().next();
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            if(connection != null) {
+                connection.close();
+            }
+        }
         return false;
     }
 
