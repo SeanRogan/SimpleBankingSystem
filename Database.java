@@ -13,7 +13,6 @@ public class Database {
     public String getUrl() {
         return url;
     }
-
     public void setUrl(String url) {
         this.url = url;
     }
@@ -29,18 +28,19 @@ public class Database {
     private void createNewDatabase(String fileName) {
         String url = "jdbc:sqlite:/Users/seanrogan/IdeaProjects/Simple Banking System1/Simple Banking System/task/" + fileName;
         setUrl(url);
-        Connection connect = null;
+        Connection connection = null;
         try{
-            connect = DriverManager.getConnection(url);
+            connection = DriverManager.getConnection(url);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
 
         } finally {
-            if(connect != null) {
+            if(connection != null) {
                 try {
-                    connect.close();
+                    connection.close();
                 } catch (SQLException e) {
-                    System.out.println(e.getMessage());                }
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
@@ -55,8 +55,8 @@ public class Database {
         }
         return connection;
     }
-    public void createCardTable() throws SQLException {
-        Connection connect = null;
+    public void createCardTable() {
+        Connection connection = null;
         String sqlCreateTableStatement = "CREATE TABLE IF NOT EXISTS card (\n" +
                 "id INTEGER PRIMARY KEY,\n" +
                 "number TEXT NOT NULL\n," +
@@ -65,92 +65,152 @@ public class Database {
 
         String url = "jdbc:sqlite:/Users/seanrogan/IdeaProjects/Simple Banking System1/Simple Banking System/task/" + fileName;
         try {
-            connect = DriverManager.getConnection(url);
-            Statement s = connect.createStatement();
+            connection = DriverManager.getConnection(url);
+            Statement s = connection.createStatement();
             s.execute(sqlCreateTableStatement);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
 
         } finally {
-            if(connect != null) {
-                connect.close();
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
+
     public void updateBalance (String balance, String cardNumber) {
         String sql = "UPDATE card SET balance = ? WHERE number =" + cardNumber;
+        Connection connection = null;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             //ps.setString(1, cardNumber);
             ps.setString(1, balance);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
+
     public void update(String sql) {
+        Connection connection = null;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
     public ResultSet select(String sql) {
-        ResultSet set = null;
+        Connection connection = null;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             return ps.executeQuery();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
-       return null;
+        return null;
     }
 
     public void deleteAccount(String cardNumber) {
         String sql = "DELETE FROM card WHERE number = ?";
+        Connection connection = null;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, cardNumber);
         } catch(SQLException e) {
             System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
 
     public void insert(String sql) {
+        Connection connection = null;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
 
     public void insertNewAccount(String customerID, String cardNumber, String pin) {
         String sql = "INSERT or REPLACE INTO card(id, number, pin) VALUES(?,?,?)";
+        Connection connection = null;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, Integer.parseInt(customerID));
             ps.setString(2, cardNumber);
             ps.setString(3, pin);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
 
     }
     public float queryBalance(String cardNumber) {
         String sql = "SELECT balance FROM card WHERE number = ?";
+        Connection connection = null;
         float currentBalance = 0.0F;
         try{
-            Connection conn = this.connect();
-            PreparedStatement ps = conn.prepareStatement(sql);
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, cardNumber);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
@@ -159,6 +219,14 @@ public class Database {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
 
         return currentBalance;

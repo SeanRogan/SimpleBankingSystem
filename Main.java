@@ -69,7 +69,7 @@ public class Main {
             String inputPinNumber = scan.next();
 
             //if wrong credentials, exit to menu
-            if(!checkLoginCredentials(bank, inputCardNumber, inputPinNumber)) {
+            if(!checkLoginCredentials(bank, db, inputCardNumber, inputPinNumber)) {
                 return false;
             }
             loggedIn = true;
@@ -173,17 +173,10 @@ public class Main {
     }
 
 
-    private static boolean checkLoginCredentials(Bank bank, String inputCardNumber, String inputPinNumber) {
+    private static boolean checkLoginCredentials(Bank bank, Database db, String inputCardNumber, String inputPinNumber) {
 
-        //todo rewrite this to query the data base for matches
-        try {
-            if (bank.getBankAccounts().get(inputCardNumber.substring(6, 15)).getPin().equals(inputPinNumber) &&
-                    (bank.getBankAccounts().get(inputCardNumber.substring(6, 15)).getCardNumber().equals(inputCardNumber))) {
-                return true;
-            }
-        } catch (NullPointerException e) {
-            System.out.println("Wrong card number or PIN!");
-        }
+
+        //todo rewrite this to query the data base for matches PRIORITY 1
 
         return false;
     }
