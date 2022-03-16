@@ -122,6 +122,7 @@ public class Database {
             }
         }
     }
+
     public ResultSet select(String sql) {
         Connection connection = null;
         try{
@@ -204,6 +205,7 @@ public class Database {
         }
 
     }
+
     public float queryBalance(String cardNumber) {
         String sql = "SELECT balance FROM card WHERE number = ?";
         Connection connection = null;
@@ -230,6 +232,32 @@ public class Database {
         }
 
         return currentBalance;
+    }
+
+    public boolean findAccount(String cardNumber) {
+        Connection connection = null;
+            String sql = "SELECT * FROM card";
+        try{
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                if(rs.getString("number") == cardNumber) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+            return false;
     }
 
 }

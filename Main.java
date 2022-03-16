@@ -13,6 +13,7 @@ public class Main {
     final public static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) throws SQLException {
+
         Database db = new Database(args);
         db.createCardTable();
 
@@ -53,13 +54,13 @@ public class Main {
 
     }
 
-    private static boolean accessAccount(Bank bank, Database db) {
-        //returns a boolean, true if the program is to exit, false otherwise
+    private static boolean accessAccount(Bank bank, Database db) throws SQLException {
+        //returns a boolean, true if the program is to exit, false otherwise.
         boolean loggedIn;
         String accountNumber;
         System.out.println("Enter your card number:");
         try {
-            String inputCardNumber = scan.next();
+            String inputCardNumber = scan.next().trim();
             if(inputCardNumber.length() == 16) {
                 accountNumber = inputCardNumber.substring(6, 15);
             } else return false;
@@ -94,16 +95,28 @@ public class Main {
                         float deposit = scan.nextInt();
                         float balance = db.queryBalance(inputCardNumber);
                         float newBalance = balance + deposit;
-                        bank.getBankAccounts().get(accountNumber).depositFunds(deposit);
                         db.updateBalance(Float.toString(newBalance) , inputCardNumber);
                         System.out.println("Income was added!");
                         return false;
                     }
                     case 3: {
                         //TRANSFER
+                        //transferFunds(db,inputCardNumber,inputPinNumber);
                         System.out.println("Transfer");
                         System.out.println("Enter card number:");
                         String cardNumber = scan.nextLine();
+                        if(!db.findAccount(cardNumber)) {
+                            System.out.println("Such a card does not exist.");
+                            return false;
+                        }
+                        if(cardNumber.length() < 15) {
+                            System.out.println("Probably you made a mistake in the card number. Please try again!");
+                            return false;
+                        }
+                        if(!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
+                            System.out.println("Probably you made a mistake in the card number. Please try again!");
+                            return false;
+                        }
                         System.out.println("Enter how much money you want to transfer:");
                         String transfer = scan.nextLine();
                         if(Float.parseFloat(transfer) > db.queryBalance(inputCardNumber)) {
@@ -112,14 +125,6 @@ public class Main {
                         }
                         if(cardNumber.equals(inputCardNumber)) {
                             System.out.println("You can't transfer money to the same account!");
-                            return false;
-                        }
-                        if(!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
-                            System.out.println("Probably you made a mistake in the card number. Please try again!");
-                            return false;
-                        }
-                        if(!findAccount(db , cardNumber)) {
-                            System.out.println("Such a card does not exist.");
                             return false;
                         }
                         //if it gets past all the exceptions, transfer the money
@@ -149,27 +154,48 @@ public class Main {
                         return false;
                 }
             }
-        } catch (Exception e){
+        } catch (InputMismatchException e){
             System.out.println("Sorry! That was not a valid input.");
             return false;
         }
         return false;
     }
 
-    private static boolean findAccount(Database db, String cardNumber) {
-        String sql = "SELECT * FROM card";
-        ResultSet queryResult = db.select(sql);
-        try{
-            while(queryResult.next()) {
-                if (queryResult.getString("number").equals(cardNumber)) {
-                    return true;
-                }
-            }
-        } catch(SQLException e){
-            System.out.println(e.getMessage());
+    private static boolean transferFunds(Database db , String inputCardNumber, String inputPinNumber) {
+        System.out.println("Transfer");
+        System.out.println("Enter card number:");
+        String cardNumber = scan.nextLine();
+        if(cardNumber.length() < 15) {
+            System.out.println("Probably you made a mistake in the card number. Please try again!");
+            return false;
         }
+        if(!db.findAccount(cardNumber)) {
+            System.out.println("Such a card does not exist.");
+            return false;
+        }
+        if(!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
+            System.out.println("Probably you made a mistake in the card number. Please try again!");
+            return false;
+        }
+        System.out.println("Enter how much money you want to transfer:");
+        String transfer = scan.nextLine();
+        if(Float.parseFloat(transfer) > db.queryBalance(inputCardNumber)) {
+            System.out.println("Not enough money!");
+            return false;
+        }
+        if(cardNumber.equals(inputCardNumber)) {
+            System.out.println("You can't transfer money to the same account!");
+            return false;
+        }
+        //if it gets past all the exceptions, transfer the money
+        float currentBalance = db.queryBalance(cardNumber);
+        String newBalance = Float.toString(currentBalance + Float.parseFloat(transfer));
+        db.updateBalance(newBalance, cardNumber);
+        System.out.println("Success!");
         return false;
     }
+
+
 
 
     private static boolean checkLoginCredentials(Bank bank, Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
