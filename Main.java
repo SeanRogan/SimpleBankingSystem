@@ -58,11 +58,13 @@ public class Main {
     private static boolean accessAccount(Bank bank, Database db) {
         //returns a boolean, true if the program is to exit, false otherwise
         boolean loggedIn;
+        String accountNumber;
         System.out.println("Enter your card number:");
         try {
             String inputCardNumber = scan.next();
-            String accountNumber = inputCardNumber.substring(6, 15);
-
+            if(inputCardNumber.length() == 16) {
+                accountNumber = inputCardNumber.substring(6, 15);
+            } else return false;
             System.out.println("Enter your PIN:");
             String inputPinNumber = scan.next();
 
