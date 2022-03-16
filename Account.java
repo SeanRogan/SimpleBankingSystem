@@ -16,7 +16,7 @@ public class Account {
         //randomly generated 4 digit pin from 1000-9999
         this.pin = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9999));
         //randomly generated account number
-        this.accountNumber = generateAccountNumber();
+        this.accountNumber = generateAccountNumber(db);
         //set card number
         this.cardNumber = generateCardNumber(bank.getBankIdNumber(), accountNumber);
         //set bank id account belongs to
@@ -27,14 +27,10 @@ public class Account {
         System.out.println("\nYour card has been created\nYour card number:\n" + this.cardNumber + "\n" + "Your card PIN:\n" + this.pin + "\n");
     }
     //randomly generated account number
-    private String generateAccountNumber() {
-        //todo loop through existing bank accounts and
-        // check that the generated account number
-        // doesnt match any previously existing ones
-        // beforing issueing the number to the client.
-        // use a while loop to keep it generating
-        // new numbers until it finds one that isnt being used.
-        return String.valueOf(ThreadLocalRandom.current().nextInt(100000000, 999999999));
+    private String generateAccountNumber(Database db) {
+
+           return String.valueOf(ThreadLocalRandom.current()
+                    .nextInt(100000000, 999999999));
     }
     private String generateCardNumber(String bankIdNumber, String accountNumber) {
         String cardSeed = bankIdNumber + accountNumber;
