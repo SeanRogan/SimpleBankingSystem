@@ -8,11 +8,7 @@ public class LuhnAlgorithmChecker {
     }
 
     public boolean verifyCardNumber(String cardNumber) {
-        //todo build this to take a card number
-        if (cardNumber.charAt(cardNumber.length()-1) == (char)returnCheckDigit(cardNumber)) {
-            return true;
-        }
-        return false;
+        return cardNumber.charAt(cardNumber.length() - 1) == (char) returnCheckDigit(cardNumber);
     }
 
     public int findCheckSum(String number) {

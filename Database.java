@@ -78,10 +78,11 @@ public class Database {
         }
     }
     public void updateBalance (String balance, String cardNumber) {
-        String sql = "UPDATE card WHERE number = ? SET balance = ?";
+        String sql = "UPDATE card SET balance = ? WHERE number =" + cardNumber;
         try{
             Connection conn = this.connect();
             PreparedStatement ps = conn.prepareStatement(sql);
+            //ps.setString(1, cardNumber);
             ps.setString(1, balance);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -144,14 +145,13 @@ public class Database {
         }
 
     }
-    public float queryBalance(String balance, String cardNumber) {
-        String sql = "SELECT ? FROM card WHERE number = '?'";
+    public float queryBalance(String cardNumber) {
+        String sql = "SELECT balance FROM card WHERE number = ?";
         float currentBalance = 0.0F;
         try{
             Connection conn = this.connect();
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, balance);
-            ps.setString(2, cardNumber);
+            ps.setString(1, cardNumber);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
                 currentBalance = Float.parseFloat(rs.getString("balance"));

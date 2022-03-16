@@ -58,7 +58,6 @@ public class Main {
     private static boolean accessAccount(Bank bank, Database db) {
         //returns a boolean, true if the program is to exit, false otherwise
         boolean loggedIn;
-        boolean validInput = true;
         System.out.println("Enter your card number:");
         try {
             String inputCardNumber = scan.next();
@@ -66,6 +65,7 @@ public class Main {
 
             System.out.println("Enter your PIN:");
             String inputPinNumber = scan.next();
+
             //if wrong credentials, exit to menu
             if(!checkLoginCredentials(bank, inputCardNumber, inputPinNumber)) {
                 return false;
@@ -84,17 +84,14 @@ public class Main {
                         //GET BALANCE
                         //formats balance as float to two decimals
                         //System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
-                        System.out.printf("%.2f", db.queryBalance("balance", inputCardNumber));
+                        System.out.printf("%.2f", db.queryBalance(inputCardNumber));
                         return false;
                     }
                     case 2: {
                         //DEPOSIT
-                        float deposit = 0;
-                        float balance = 0;
                         System.out.println("Enter income:");
-                        String in = scan.nextLine();
-                        deposit = Float.parseFloat(in);
-                        balance = db.queryBalance("balance", inputCardNumber);
+                        float deposit = scan.nextInt();
+                        float balance = db.queryBalance(inputCardNumber);
                         float newBalance = balance + deposit;
                         bank.getBankAccounts().get(accountNumber).depositFunds(deposit);
                         db.updateBalance(Float.toString(newBalance) , inputCardNumber);
@@ -108,11 +105,11 @@ public class Main {
                         String cardNumber = scan.nextLine();
                         System.out.println("Enter how much money you want to transfer:");
                         String transfer = scan.nextLine();
-                        if(Float.parseFloat(transfer) > db.queryBalance("balance" , inputCardNumber)) {
+                        if(Float.parseFloat(transfer) > db.queryBalance(inputCardNumber)) {
                             System.out.println("Not enough money!");
                             return false;
                         }
-                        if(cardNumber == inputCardNumber) {
+                        if(cardNumber.equals(inputCardNumber)) {
                             System.out.println("You can't transfer money to the same account!");
                             return false;
                         }
@@ -125,7 +122,7 @@ public class Main {
                             return false;
                         }
                         //if it gets past all the exceptions, transfer the money
-                        float currentBalance = db.queryBalance("balance" , cardNumber);
+                        float currentBalance = db.queryBalance(cardNumber);
                         String newBalance = Float.toString(currentBalance + Float.parseFloat(transfer));
                         db.updateBalance(newBalance, cardNumber);
                         System.out.println("Success!");
@@ -133,6 +130,7 @@ public class Main {
                     break;
                     case 4: {
                         //CLOSE ACCOUNT
+
                         bank.getBankAccounts().remove(inputCardNumber);
                         db.deleteAccount(inputCardNumber);
                         System.out.println("The account has been closed!");
@@ -162,7 +160,7 @@ public class Main {
         ResultSet queryResult = db.select(sql);
         try{
             while(queryResult.next()) {
-                if (queryResult.getString("number") == cardNumber) {
+                if (queryResult.getString("number").equals(cardNumber)) {
                     return true;
                 }
             }
