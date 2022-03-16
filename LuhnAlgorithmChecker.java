@@ -1,5 +1,7 @@
 package banking;
 
+import org.sqlite.util.StringUtils;
+
 import java.util.Arrays;
 
 public class LuhnAlgorithmChecker {
@@ -8,7 +10,8 @@ public class LuhnAlgorithmChecker {
     }
 
     public boolean verifyCardNumber(String cardNumber) {
-        return cardNumber.charAt(cardNumber.length() - 1) == (char) returnCheckDigit(cardNumber);
+        int checkDigit = returnCheckDigit(cardNumber.substring(0,15));
+        return (cardNumber.endsWith(String.valueOf(checkDigit)));
     }
 
     public int findCheckSum(String number) {
@@ -34,9 +37,6 @@ public class LuhnAlgorithmChecker {
         //return sum off numbers in array
         return Arrays.stream(cardNumberArray).sum();
     }
-
-
-
 
     public int returnCheckDigit(String cardNumberSeed){
         int[] cardNumberArray = new int[cardNumberSeed.length()];
