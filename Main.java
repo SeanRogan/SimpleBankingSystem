@@ -31,7 +31,10 @@ public class Main {
         // it should remain logged in and in the logged in menu, until you select exit,
         // or log out which brings you bakc to the main menu. We need to break the account access method
         // into a login method and account menu method
+        // .
         // maybe the method should return ints or strings to guide what to do next
+        // .
+        // .
         // case 2:
         // while(loggedIn()) {
         //                      accountMenu();
@@ -54,11 +57,6 @@ public class Main {
 
 
         while(running) {
-            if(isLoggedIn()) {
-                if(accessAccount(bank, db)) {
-                    running = false;
-                }
-            } else {
             printMenu();
             //take number as input
             try {
@@ -87,7 +85,7 @@ public class Main {
             //clear scanner for next input
             scan.nextLine();
         }
-        }
+
         System.out.println("Bye!");
         scan.close();
 
@@ -95,12 +93,12 @@ public class Main {
 
     private static boolean accessAccount(Bank bank, Database db) throws SQLException {
         //returns a boolean, true if the program is to exit, false otherwise.
-        String accountNumber;
+        //String accountNumber; not needed
         System.out.println("Enter your card number:");
         try {
             String inputCardNumber = scan.next().trim();
             if(inputCardNumber.length() == 16) {
-                accountNumber = inputCardNumber.substring(6, 15);
+               //accountNumber = inputCardNumber.substring(6, 15); not needed
             } else return false;
             System.out.println("Enter your PIN:");
             String inputPinNumber = scan.next();
