@@ -11,14 +11,15 @@ public class Main {
     final public static Bank bank = new Bank("400000");
     final public static Scanner scan = new Scanner(System.in);
 
+    private static boolean loggedIn = false;
     public static boolean isLoggedIn() {
         return loggedIn;
     }
+
     public static void setLoggedIn(boolean loggedIn) {
         Main.loggedIn = loggedIn;
     }
     private static String userCardNumber;
-
     public static String getUserCardNumber() {
         return userCardNumber;
     }
@@ -26,42 +27,11 @@ public class Main {
     public static void setUserCardNumber(String userCardNumber) {
         Main.userCardNumber = userCardNumber;
     }
-
-    private static boolean loggedIn = false;
     public static void main(String[] args) throws SQLException {
 
         Database db = new Database(args);
         db.createCardTable();
         boolean running = true;
-
-        //todo this while loop is breaking everything. when we log into an account,
-        // it should remain logged in and in the logged in menu, until you select exit,
-        // or log out which brings you bakc to the main menu. We need to break the account access method
-        // into a login method and account menu method
-        // .
-        // maybe the method should return ints or strings to guide what to do next
-        // .
-        // .
-        // case 2:
-        // while(loggedIn()) {
-        //                      accountMenu();
-        // }
-        // loggedIn(){
-        //      if(!isLoggedIn()){
-        //                          logIn();
-        //                       } else return true;
-        // }
-        // logIn()
-        // "enter card
-        // card = scan.nextlin
-        // "enter pin
-        // pin = scan.nextline
-        // if(checkCreds(card, pin)){
-        //                          setLoggedIn(true);
-        //                          } else setLoggedIn(false);
-        // }
-
-
 
         program: while(running) {
             printMenu();
@@ -124,6 +94,7 @@ public class Main {
 
         //if wrong credentials, exit to menu
         if (!checkLoginCredentials(bank, db, inputCardNumber, inputPinNumber)) {
+            System.out.println("Wrong card number or PIN!\n");
             return false;
         }
         setUserCardNumber(inputCardNumber);
@@ -136,7 +107,7 @@ public class Main {
         //returns a boolean, true if the program is to exit, false otherwise.
         //String accountNumber; not needed
         String inputCardNumber = getUserCardNumber();
-        loggedInMenu: while (isLoggedIn()) {
+        loggedInMenu: if(isLoggedIn()) {
             System.out.println("1 Balance\n2. Add income\n3. Do transfer\n4. Close account\n5. Log out\n0. Exit\n");
             int input = scan.nextInt();
             scan.nextLine();
@@ -209,11 +180,10 @@ public class Main {
                 case 4: {
                     //CLOSE ACCOUNT
 
-                    bank.getBankAccounts().remove(inputCardNumber);
-                    db.deleteAccount(inputCardNumber);
-                    setUserCardNumber("");
+                    bank.getBankAccounts().remove(getUserCardNumber());
+                    db.deleteAccount(getUserCardNumber());
                     setLoggedIn(false);
-                    System.out.println("The account has been closed!");
+                    System.out.println("The account has been closed!\n");
                     return 1;
 
                 }

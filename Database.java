@@ -24,6 +24,17 @@ public class Database {
         createNewDatabase(fileName);
 
     }
+    public Connection connect() {
+        String url = getUrl();
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(url);
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return connection;
+    }
+
 
     private void createNewDatabase(String fileName) {
         String url = "jdbc:sqlite:/Users/seanrogan/IdeaProjects/Simple Banking System1/Simple Banking System/task/" + fileName;
@@ -43,17 +54,6 @@ public class Database {
                 }
             }
         }
-    }
-
-    public Connection connect() {
-        String url = getUrl();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(url);
-        } catch(SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return connection;
     }
     public void createCardTable() {
         Connection connection = null;
@@ -81,7 +81,6 @@ public class Database {
             }
         }
     }
-
     public void updateBalance (String balance, String cardNumber) {
         String sql = "UPDATE card SET balance = ? WHERE number =" + cardNumber;
         Connection connection = null;
@@ -104,72 +103,15 @@ public class Database {
         }
     }
 
-    public void update(String sql) {
-        Connection connection = null;
-        try{
-            connection = this.connect();
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }finally {
-            if(connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-    }
-
-    public ResultSet select(String sql) {
-        Connection connection = null;
-        try{
-            connection = this.connect();
-            PreparedStatement ps = connection.prepareStatement(sql);
-            return ps.executeQuery();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            if(connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-        return null;
-    }
-//todo this isnt deleting cards
     public void deleteAccount(String cardNumber) {
-        String sql = "DELETE FROM card WHERE number IS ?";
+        String sql = "DELETE FROM card where number=?";
         Connection connection = null;
         try{
             connection = this.connect();
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, cardNumber);
-        } catch(SQLException e) {
-            System.out.println(e.getMessage());
-        }finally {
-            if(connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
-    }
-
-    public void insert(String sql) {
-        Connection connection = null;
-        try{
-            connection = this.connect();
-            PreparedStatement ps = connection.prepareStatement(sql);
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println(e.getMessage());
         }finally {
             if(connection != null) {
@@ -260,5 +202,42 @@ public class Database {
             return false;
     }
 
+    public void update(String sql) {
+        Connection connection = null;
+        try{
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
+    public ResultSet select(String sql) {
+        Connection connection = null;
+        try{
+            connection = this.connect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return null;
+    }
 }
 
