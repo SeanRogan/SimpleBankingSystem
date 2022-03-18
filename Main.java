@@ -80,9 +80,8 @@ public class Main {
 
         if(!isLoggedIn()){
 
-            if(!logIn(db, bank)) return false;
+            return logIn(db, bank);
         } else return true;
-        return true;
     }
 
     private static boolean logIn(Database db, Bank bank) throws SQLException {
@@ -93,7 +92,7 @@ public class Main {
         String inputPinNumber = scan.next().trim();
 
         //if wrong credentials, exit to menu
-        if (!checkLoginCredentials(bank, db, inputCardNumber, inputPinNumber)) {
+        if (!checkLoginCredentials(db, inputCardNumber, inputPinNumber)) {
             System.out.println("Wrong card number or PIN!\n");
             return false;
         }
@@ -104,8 +103,6 @@ public class Main {
     }
 
     private static int accountMenu(Database db){
-        //returns a boolean, true if the program is to exit, false otherwise.
-        //String accountNumber; not needed
         String inputCardNumber = getUserCardNumber();
         loggedInMenu: if(isLoggedIn()) {
             System.out.println("1 Balance\n2. Add income\n3. Do transfer\n4. Close account\n5. Log out\n0. Exit\n");
@@ -142,7 +139,7 @@ public class Main {
                     while(!transferComplete) {
                         System.out.println("Transfer");
                         System.out.println("Enter card number:");
-                        String transfer = "";
+                        String transfer;
                         String cardNumber = scan.nextLine().trim();
 
                         if (!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
@@ -204,7 +201,7 @@ public class Main {
         return 2;
     }
 
-    private static boolean checkLoginCredentials(Bank bank, Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
+    private static boolean checkLoginCredentials(Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
         Connection connection = null;
         try {
             connection = db.connect();
