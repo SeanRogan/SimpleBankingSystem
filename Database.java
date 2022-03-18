@@ -142,9 +142,9 @@ public class Database {
         }
         return null;
     }
-
+//todo this isnt deleting cards
     public void deleteAccount(String cardNumber) {
-        String sql = "DELETE FROM card WHERE number = ?";
+        String sql = "DELETE FROM card WHERE number IS ?";
         Connection connection = null;
         try{
             connection = this.connect();
@@ -242,7 +242,7 @@ public class Database {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
-                if(rs.getString("number") == cardNumber) {
+                if(rs.getString("number").equals(cardNumber)) {
                     return true;
                 }
             }

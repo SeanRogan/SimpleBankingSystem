@@ -1,7 +1,6 @@
 package banking;
 
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.InputMismatchException;
 
@@ -15,9 +14,17 @@ public class Main {
     public static boolean isLoggedIn() {
         return loggedIn;
     }
-
     public static void setLoggedIn(boolean loggedIn) {
         Main.loggedIn = loggedIn;
+    }
+    private static String userCardNumber;
+
+    public static String getUserCardNumber() {
+        return userCardNumber;
+    }
+
+    public static void setUserCardNumber(String userCardNumber) {
+        Main.userCardNumber = userCardNumber;
     }
 
     private static boolean loggedIn = false;
@@ -56,7 +63,7 @@ public class Main {
 
 
 
-        while(running) {
+        program: while(running) {
             printMenu();
             //take number as input
             try {
@@ -71,8 +78,17 @@ public class Main {
                     }
                     break;
                     case 2: {
-                        if(accessAccount(bank, db)) {
-                            running = false;
+                        logInLoop: while(loggedIn(db,bank)) {
+                            switch(accountMenu(db)) {
+                                case 0: {
+                                    break program;
+                                }
+                                case 1: {
+                                    break logInLoop;
+                                }
+                                default: {}
+                                break;
+                            }
                         }
                     }
                     break;
@@ -83,7 +99,6 @@ public class Main {
                 System.out.println("Please choose either 0, 1, or 2!\n");
             }
             //clear scanner for next input
-            scan.nextLine();
         }
 
         System.out.println("Bye!");
@@ -91,111 +106,134 @@ public class Main {
 
     }
 
-    private static boolean accessAccount(Bank bank, Database db) throws SQLException {
+    private static boolean loggedIn(Database db, Bank bank) throws SQLException {
+
+        if(!isLoggedIn()){
+
+            if(!logIn(db, bank)) return false;
+        } else return true;
+        return true;
+    }
+
+    private static boolean logIn(Database db, Bank bank) throws SQLException {
+        System.out.println("Enter your card number:");
+        String inputCardNumber = scan.next().trim();
+
+        System.out.println("Enter your PIN:");
+        String inputPinNumber = scan.next().trim();
+
+        //if wrong credentials, exit to menu
+        if (!checkLoginCredentials(bank, db, inputCardNumber, inputPinNumber)) {
+            return false;
+        }
+        setUserCardNumber(inputCardNumber);
+        setLoggedIn(true);
+        System.out.println("You have successfully logged in!\n");
+        return true;
+    }
+
+    private static int accountMenu(Database db){
         //returns a boolean, true if the program is to exit, false otherwise.
         //String accountNumber; not needed
-        System.out.println("Enter your card number:");
-        try {
-            String inputCardNumber = scan.next().trim();
-            if(inputCardNumber.length() == 16) {
-               //accountNumber = inputCardNumber.substring(6, 15); not needed
-            } else return false;
-            System.out.println("Enter your PIN:");
-            String inputPinNumber = scan.next();
+        String inputCardNumber = getUserCardNumber();
+        loggedInMenu: while (isLoggedIn()) {
+            System.out.println("1 Balance\n2. Add income\n3. Do transfer\n4. Close account\n5. Log out\n0. Exit\n");
+            int input = scan.nextInt();
+            scan.nextLine();
+            switch (input) {
+                case 0: {
+                    setLoggedIn(false);
+                    return 0;
+                }
+                case 1: {
+                    //GET BALANCE
+                    //formats balance as float to two decimals
+                    //System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
+                    System.out.printf("%.2f", db.queryBalance(inputCardNumber));
+                    System.out.println();
+                    return 2;
+                }
 
-            //if wrong credentials, exit to menu
-            if(!checkLoginCredentials(bank, db, inputCardNumber, inputPinNumber)) {
-                return false;
-            }
-            setLoggedIn(true);
-            System.out.println("You have successfully logged in!\n");
+                case 2: {
+                    //DEPOSIT
+                    System.out.println("Enter income:");
+                    float deposit = scan.nextInt();
+                    float balance = db.queryBalance(inputCardNumber);
+                    float newBalance = balance + deposit;
+                    db.updateBalance(Float.toString(newBalance) , inputCardNumber);
+                    System.out.println("Income was added!");
+                    return 2;
+                }
 
-            while (isLoggedIn()) {
-                System.out.println("1 Balance\n2. Add income\n3. Do transfer\n4. Close account\n5. Log out\n0. Exit\n");
-                int input = scan.nextInt();
-                switch (input) {
-                    case 0: {
-                        return true;
-                    }
-                    case 1: {
-                        //GET BALANCE
-                        //formats balance as float to two decimals
-                        //System.out.printf("%.2f", bank.getBankAccounts().get(accountNumber).getBalance());
-                        System.out.printf("%.2f", db.queryBalance(inputCardNumber));
-                        System.out.println();
-                        return false;
-                    }
-                    case 2: {
-                        //DEPOSIT
-                        System.out.println("Enter income:");
-                        float deposit = scan.nextInt();
-                        float balance = db.queryBalance(inputCardNumber);
-                        float newBalance = balance + deposit;
-                        db.updateBalance(Float.toString(newBalance) , inputCardNumber);
-                        System.out.println("Income was added!");
-                        return false;
-                    }
-                    case 3: {
-                        //TRANSFER
-                        boolean transferComplete = false;
-                        while(!transferComplete) {
-                            System.out.println("Transfer");
-                            System.out.println("Enter card number:");
-                            String cardNumber = scan.next();
+                case 3: {
+                    //TRANSFER
+                    boolean transferComplete = false;
+                    while(!transferComplete) {
+                        System.out.println("Transfer");
+                        System.out.println("Enter card number:");
+                        String transfer = "";
+                        String cardNumber = scan.nextLine().trim();
 
-                            if (!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
-                                System.out.println("Probably you made a mistake in the card number. Please try again!");
-                                return false;
-                            }
-                            if (!db.findAccount(cardNumber)) {
-                                System.out.println("Such a card does not exist.");
-                                return false;
-                            }
+                        if (!new LuhnAlgorithmChecker().verifyCardNumber(cardNumber)) {
+                            System.out.println("Probably you made a mistake in the card number. Please try again!");
+                        }
+                        if (!db.findAccount(cardNumber)) {
+                            System.out.println("Such a card does not exist.");
+                            return 2;
+                        }else {
+
                             System.out.println("Enter how much money you want to transfer:");
-                            String transfer = scan.nextLine();
+
+                            transfer = scan.nextLine().trim();
                             if (Float.parseFloat(transfer) > db.queryBalance(inputCardNumber)) {
                                 System.out.println("Not enough money!");
-                                return false;
+                                return 2;
                             }
                             if (cardNumber.equals(inputCardNumber)) {
                                 System.out.println("You can't transfer money to the same account!");
-                                return false;
+                                return 2;
                             }
                             //if it gets past all the exceptions, transfer the money
-                            float currentBalance = db.queryBalance(cardNumber);
-                            String newBalance = Float.toString(currentBalance + Float.parseFloat(transfer));
-                            db.updateBalance(newBalance, cardNumber);
+                            //get receiving account balance
+                            float receivingAccountStartingBalance = db.queryBalance(cardNumber);
+                            float depositingAccountStartingBalance = db.queryBalance(getUserCardNumber());
+                            db.updateBalance(Float.toString(depositingAccountStartingBalance - Float.parseFloat(transfer)), getUserCardNumber());
+                            db.updateBalance(Float.toString(receivingAccountStartingBalance + Float.parseFloat(transfer)), cardNumber);
                             System.out.println("Success!");
                             transferComplete = true;
                         }
                     }
-                    break;
-                    case 4: {
-                        //CLOSE ACCOUNT
-
-                        bank.getBankAccounts().remove(inputCardNumber);
-                        db.deleteAccount(inputCardNumber);
-                        System.out.println("The account has been closed!");
-                        return false;
-                    }
-
-                    case 5: {
-                        //LOG OUT
-                        System.out.println("You have successfully logged out!");
-                        loggedIn = false;
-                    }
-                    break;
-                    default:
-                        System.out.println("Please choose a number, from 0 to 5!");
-                        return false;
+                    return 2;
                 }
+
+                case 4: {
+                    //CLOSE ACCOUNT
+
+                    bank.getBankAccounts().remove(inputCardNumber);
+                    db.deleteAccount(inputCardNumber);
+                    setUserCardNumber("");
+                    setLoggedIn(false);
+                    System.out.println("The account has been closed!");
+                    return 1;
+
+                }
+
+                case 5: {
+                    //LOG OUT
+                    System.out.println("You have successfully logged out!");
+                    setLoggedIn(false);
+                    break loggedInMenu;
+                }
+
+                default:
+                    System.out.println("Please choose a number, from 0 to 5!");
+                    return 2;
             }
-        } catch (InputMismatchException e){
-            System.out.println("Sorry! That was not a valid input.");
-            return false;
         }
-        return false;
+
+        return 2;
     }
+
     private static boolean checkLoginCredentials(Bank bank, Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
         Connection connection = null;
         try {

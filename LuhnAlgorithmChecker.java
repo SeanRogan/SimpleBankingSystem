@@ -3,6 +3,7 @@ package banking;
 import org.sqlite.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.InputMismatchException;
 
 public class LuhnAlgorithmChecker {
 
@@ -10,7 +11,12 @@ public class LuhnAlgorithmChecker {
     }
 
     public boolean verifyCardNumber(String cardNumber) {
-        int checkDigit = returnCheckDigit(cardNumber.substring(0,15));
+        int checkDigit = 0;
+        try {
+            checkDigit = returnCheckDigit(cardNumber.substring(0, 15));
+        } catch(Exception e) {
+            System.out.println("Sorry that was not a valid input");
+        }
         return (cardNumber.endsWith(String.valueOf(checkDigit)));
     }
 
