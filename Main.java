@@ -3,9 +3,10 @@ package banking;
 
 import java.sql.*;
 import java.util.InputMismatchException;
-
 import java.util.Scanner;
+//todo this whole thing might be cleaner if i just had the ATM program in the bank class...\\
 
+//todo implement logging
 public class Main {
     //initialize bank class with id number.
     final public static Bank bank = new Bank("400000");
@@ -23,7 +24,6 @@ public class Main {
     public static String getUserCardNumber() {
         return userCardNumber;
     }
-
     public static void setUserCardNumber(String userCardNumber) {
         Main.userCardNumber = userCardNumber;
     }
@@ -79,7 +79,6 @@ public class Main {
     private static boolean loggedIn(Database db, Bank bank) throws SQLException {
 
         if(!isLoggedIn()){
-
             return logIn(db, bank);
         } else return true;
     }
@@ -101,7 +100,7 @@ public class Main {
         System.out.println("You have successfully logged in!\n");
         return true;
     }
-
+    //todo this should probably be in the account class
     private static int accountMenu(Database db){
         String inputCardNumber = getUserCardNumber();
         loggedInMenu: if(isLoggedIn()) {
@@ -200,7 +199,7 @@ public class Main {
 
         return 2;
     }
-
+    //todo this should be in the bank or account class
     private static boolean checkLoginCredentials(Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
         Connection connection = null;
         try {
@@ -217,6 +216,8 @@ public class Main {
         }
         return false;
     }
+
+
     private static void createAccount(Bank bank, Database db) {
         bank.createAccount(bank , db);
     }

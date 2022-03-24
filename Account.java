@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Account {
-    final LuhnAlgorithmChecker algo = new LuhnAlgorithmChecker();
-    private String customerID;
-    private String bankIdNumber;
-    private String accountNumber;
-    private String cardNumber;
-    private String pin;
+    final private LuhnAlgorithmChecker algo = new LuhnAlgorithmChecker();
+    final private String customerID, bankIdNumber, accountNumber;
+    private String cardNumber, pin;
     private float balance;
 
     Account(Bank bank , Database db) {
@@ -32,44 +29,46 @@ public class Account {
            return String.valueOf(ThreadLocalRandom.current()
                     .nextInt(100000000, 999999999));
     }
+    //creates card number from bank id code, account number, and luhn algorithm check-digit
     private String generateCardNumber(String bankIdNumber, String accountNumber) {
         String cardSeed = bankIdNumber + accountNumber;
         return bankIdNumber + accountNumber + algo.returnCheckDigit(cardSeed);
     }
+
     public String getCardNumber() {
         return cardNumber;
     }
-
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
+
     public String getPin() {
         return pin;
     }
-
     public void setPin(String pin) {
         this.pin = pin;
     }
+
     public float getBalance() {
         return balance;
     }
     public void setBalance(float balance) {
         this.balance = balance;
     }
+
     public void depositFunds(float deposit) {
         this.balance+=deposit;
     }
     public void withdrawFunds(float withdrawal) {
         this.balance-=withdrawal;
     }
+
     public String getBankIdNumber() {
         return bankIdNumber;
     }
-
     public String getCustomerID() {
         return customerID;
     }
-
     public String getAccountNumber() {
         return accountNumber;
     }
