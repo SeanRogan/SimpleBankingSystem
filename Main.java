@@ -1,10 +1,6 @@
 package banking;
 
-
-import java.sql.*;
-import java.util.InputMismatchException;
 import java.util.Scanner;
-//todo this whole thing might be cleaner if i just had the ATM program in the bank class...\\
 
 //todo implement logging
 public class Main {

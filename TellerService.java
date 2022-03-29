@@ -37,8 +37,10 @@ public class TellerService {
             //take number as input
             try {
                 int input = scan.nextInt();
+                //0: exit 1:create account 2:log in
                 switch (input) {
                     case 0: {
+                        //exit, breaks program loop
                         running = false;
                     }
                     break;
@@ -173,6 +175,7 @@ public class TellerService {
 
         return 2;
     }
+
     private boolean checkLoginCredentials(Database db, String inputCardNumber, String inputPinNumber) throws SQLException {
         Connection connection = null;
         try {
@@ -190,12 +193,17 @@ public class TellerService {
         return false;
     }
     private boolean loggedIn(Database db, Bank bank) throws SQLException {
+        //this method controls the while loop that runs the log in process
+        //if user is not logged in, logIn() will allow user to
+        // try and log in, and if it works returns true,
+        // if not returns false. if user is already logged in, returns true.
         if(!isLoggedIn()){
             return logIn(db, bank);
         } else return true;
     }
 
     private boolean logIn(Database db, Bank bank) throws SQLException {
+        //
         System.out.println("Enter your card number:");
         String inputCardNumber = scan.next().trim();
 
